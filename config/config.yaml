@@ -1,0 +1,49 @@
+# Telegram 聊天记录总结系统配置
+
+# 数据源配置
+data_source:
+  sessions_path: "/root/.openclaw/agents/main/sessions"
+  file_pattern: "*.jsonl"
+  source_type: "direct"  # group: 群组数据, direct: 直接消息
+  
+# 群组配置
+group:
+  target_group: "develop group"  # 目标群组名称
+  group_id: ""  # 群组ID (自动检测)
+  include_all_users: true  # 包含所有用户
+  
+# 存储配置
+storage:
+  base_path: "/root/.openclaw/workspace/telegram_summary/data"
+  raw_data: "raw"
+  processed_data: "processed"
+  summaries: "summaries"
+  group_data: "group"  # 群组数据专用目录
+  
+# 时间配置
+schedule:
+  daily_summary: "0 8 * * *"  # 每天8:00 (UTC)
+  weekly_report: "0 18 * * 5" # 每周五18:00 (UTC)
+  timezone: "UTC"
+  
+# 推送配置
+notification:
+  telegram_user_id: "8721157770"
+  enable_daily: true
+  enable_weekly: true
+  send_to_group: false  # 是否发送到群组
+  group_chat_id: ""  # 群组聊天ID
+  
+# AI 配置
+ai:
+  model: "deepseek/deepseek-chat"
+  max_tokens: 2000
+  temperature: 0.7
+  group_summary_prompt: "基于群组对话生成总结"
+  
+# 日志配置
+logging:
+  level: "INFO"
+  file: "/root/.openclaw/workspace/telegram_summary/logs/system.log"
+  max_size_mb: 10
+  backup_count: 5

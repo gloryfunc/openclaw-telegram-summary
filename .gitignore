@@ -1,0 +1,57 @@
+# 数据文件
+data/
+!data/processed/by_user/8721157770/*.json  # 保留示例总结文件
+
+# 日志文件
+logs/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+
+# 备份文件
+*.bak
+*.backup
+*.old
+
+# 临时文件
+*.tmp
+*.temp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 测试输出
+test_output/
+test_*.png
+test_*.log
+
+# 个人配置
+personal_config.yaml
+local_config.yaml
+
+# 大型文件
+*.zip
+*.tar.gz
+*.rar
+
+# 密钥文件
+*.key
+*.pem
+*.crt
+
+# 备份目录
+scripts.backup.*/
