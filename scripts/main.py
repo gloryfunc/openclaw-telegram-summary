@@ -103,6 +103,10 @@ class TelegramSummarySystem:
                     
                     # 发送通知
                     self._send_telegram_notification(user_id, summary, work_plan)
+                    
+                    # 输出每日总结摘要
+                    daily_summary = self._generate_daily_summary_text(summary)
+                    print(f"\n📅 每日总结摘要:\n{daily_summary}")
                 else:
                     print(f"     ℹ️ 用户 {user_id} 没有生成总结")
             
@@ -173,6 +177,11 @@ class TelegramSummarySystem:
                     self._send_weekly_notification(user_id, weekly_report)
                 else:
                     print(f"     ℹ️ 用户 {user_id} 没有消息数据")
+            
+            # 生成详细的周报摘要用于通知
+            if user_messages and weekly_report:
+                summary_text = self._generate_weekly_summary_text(weekly_report)
+                print(f"\n📊 周报摘要:\n{summary_text}")
             
             print(f"\n🎉 每周报告任务完成! 处理了 {len(user_ids)} 个用户")
             
@@ -267,6 +276,66 @@ class TelegramSummarySystem:
             
         except Exception as e:
             print(f"     ❌ 发送通知失败: {e}")
+    
+    def _generate_daily_summary_text(self, daily_summary):
+        """生成每日总结摘要文本"""
+        try:
+            date_str = daily_summary.date.strftime('%Y年%m月%d日') if hasattr(daily_summary.date, 'strftime') else str(daily_summary.date)
+            
+            summary = f"""
+📅 {date_str} 每日总结
+
+📊 对话统计:
+• 总消息数: {daily_summary.total_messages}
+• 你的消息: {daily_summary.user_messages}
+• 助手消息: {daily_summary.assistant_messages}
+
+🎯 关键话题:
+{chr(10).join(f'• {topic}' for topic in daily_summary.key_topics[:3]) if daily_summary.key_topics else '• 无'}
+
+📋 提到任务:
+{chr(10).join(f'• {task}' for task in daily_summary.tasks_mentioned[:3]) if daily_summary.tasks_mentioned else '• 无'}
+
+完整总结已保存到系统。
+"""
+            return summary
+        except Exception as e:
+            return f"每日总结生成完成，但生成摘要时出错: {e}"
+    
+    def _generate_weekly_summary_text(self, weekly_report):
+        """生成周报摘要文本"""
+        try:
+            total_messages = weekly_report.total_messages
+            active_days = len([s for s in weekly_report.daily_summaries if s.total_messages > 0])
+            
+            summary = f"""
+📊 {weekly_report.year}年第{weekly_report.week}周报告摘要
+
+📈 数据统计:
+• 总消息数: {total_messages}
+• 活跃天数: {active_days}天
+• 处理会话: {weekly_report.total_sessions}个
+
+🎯 本周重点:
+{chr(10).join(f'• {topic}' for topic in weekly_report.weekly_highlights[:5])}
+
+📅 活跃日期:
+"""
+            # 添加每日统计
+            for daily in weekly_report.daily_summaries[:3]:  # 只显示前3天
+                if daily.total_messages > 0:
+                    date_str = daily.date.strftime('%m月%d日') if hasattr(daily.date, 'strftime') else str(daily.date)[5:10]
+                    summary += f"• {date_str}: {daily.total_messages}条消息\n"
+            
+            summary += f"""
+📋 下周计划:
+{chr(10).join(f'• {task}' for task in weekly_report.next_week_plan[:3])}
+
+完整报告已保存到系统。
+"""
+            return summary
+        except Exception as e:
+            return f"周报生成完成，但生成摘要时出错: {e}"
     
     def _send_weekly_notification(self, user_id: str, weekly_report):
         """发送每周通知"""
