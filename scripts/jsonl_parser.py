@@ -181,10 +181,10 @@ class JSONLParser:
             if part.get("type") == "text":
                 text = part.get("text", "")
                 # 尝试从文本中提取用户信息
-                # 格式: [Telegram gray id:8721157770 ...]
-                match = re.search(r'\[Telegram\s+(\w+)\s+id:(\d+)', text)
+                # 格式: [Telegram gray (@grayphoo) id:8721157770 ...]
+                match = re.search(r'\[Telegram\s+([\w\s]+?)(?:\s+\(@[\w]+\))?\s+id:(\d+)', text)
                 if match:
-                    user_name = match.group(1)
+                    user_name = match.group(1).strip()
                     user_id = match.group(2)
                     break
         
